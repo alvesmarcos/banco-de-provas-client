@@ -6,5 +6,5 @@
 
 ## Instruções para executar o container
 
-  docker run -it -p 3000:3000 -v path-to-projetc/banco-de-provas-client/src:banco-de-provas-client/src [id imagem]
+  docker run -it -p 3000:3000 -v path-to-projetc/banco-de-provas-client/src:/banco-de-provas-client/src [id imagem]
 
