@@ -1,19 +1,25 @@
 import React, { Component } from "react";
-import { Header, Results, Footer } from "./app/components";
-import MuiThemeProvider from "material-ui/styles/MuiThemeProvider";
+import { Header, Results, Footer, Hero, SearchForm } from "./app/components";
+import { MuiThemeProvider, createMuiTheme } from 'material-ui/styles';
+
+
+const theme = createMuiTheme({
+  palette: {
+    type: 'dark',
+  },
+});
 
 class App extends Component {
   render() {
     return (
-      <MuiThemeProvider>
-          {/* TODO Encapsular em um unico elemento */}
-        <Header />
-        <div style ={{
-            margin: "30%"
-        }} >
+      <MuiThemeProvider theme={theme}>
+        <div>
+          <Header />
+          <Hero />
+          <SearchForm />
           <Results />
+          <Footer />
         </div>
-        <Footer />
       </MuiThemeProvider>
     );
   }

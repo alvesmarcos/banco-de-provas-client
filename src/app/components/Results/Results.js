@@ -1,33 +1,31 @@
 import React, { Component } from "react";
-import { Card, CardActions, CardMedia, CardTitle } from "material-ui/Card";
+import Paper from "material-ui/Paper";
+import { withStyles } from 'material-ui/styles';
+import Typography from 'material-ui/Typography';
+import { grey } from 'material-ui/colors';
 
-import FlatButton from "material-ui/FlatButton";
+const styles = theme => ({
+  root: theme.mixins.gutters({
+    paddingTop: 24,
+    paddingBottom: 24,
+    background: grey[900]
+  }),
+});
 
-export default class Results extends Component {
+class Results extends Component {
+  constructor(props) {
+    super(props);
+  }
+    
   render() {
     return (
-      <div>
-        {/* TODO Encapsular em Lista de Provas com Componentes de Cards */}
-        <Card>
-          <CardMedia>
-            <img src="http://chnm.gmu.edu/staff/jsafley/omeka/application/views/scripts/images/fallback-file.png" />
-          </CardMedia>
-          <CardTitle title="Calculo I" subtitle="2016.1" />
-          <CardActions>
-            <FlatButton label="Baixar" primary={true} />
-          </CardActions>
-        </Card>
-        <br />
-        <Card>
-          <CardMedia>
-            <img src="http://chnm.gmu.edu/staff/jsafley/omeka/application/views/scripts/images/fallback-file.png" />
-          </CardMedia>
-          <CardTitle title="Calculo III" subtitle="2016.1" />
-          <CardActions>
-            <FlatButton label="Baixar" primary={true} />
-          </CardActions>
-        </Card>
-      </div>
+      <Paper square="true" className={this.props.classes.root}>
+        <Typography type="display1" align="center">
+          Results
+        </Typography>
+      </Paper>
     );
   }
 }
+
+export default withStyles(styles)(Results);
