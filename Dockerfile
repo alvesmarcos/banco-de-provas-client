@@ -2,11 +2,9 @@ FROM node:latest
 ENV NPM_CONFIG_LOGLEVEL warn
 RUN mkdir /code
 WORKDIR /code
-COPY ./package-lock.json ./package.json ./
-COPY ./src ./src/
-COPY ./public ./public/
-RUN ls -la 
-RUN npm install
-CMD npm run start
+ADD package-lock.json /code
+ADD package.json /code 
+ADD /src/ /code/src/
+ADD /public/ /code/public/
+CMD npm install
 
-EXPOSE 3000
