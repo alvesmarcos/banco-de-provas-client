@@ -6,5 +6,4 @@ ADD package-lock.json /code
 ADD package.json /code 
 ADD /src/ /code/src/
 ADD /public/ /code/public/
-CMD npm install
 
