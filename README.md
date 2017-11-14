@@ -6,5 +6,7 @@
 
 ## Instruções para executar o container
 
+  docker-compose run react npm install
+
   docker-compose up
 
