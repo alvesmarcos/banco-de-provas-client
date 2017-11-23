@@ -7,23 +7,9 @@ import TextField from 'material-ui/TextField';
 import Grid from 'material-ui/Grid'
 import Selector from '../Selector/Selector';
 import Button from 'material-ui/Button';
-import SearchIcon from 'material-ui-icons/Search'
+import SearchIcon from 'material-ui-icons/Search';
+import request from 'superagent';
 
-const cursos = [
-  { id: "1626669", value: "CIÊNCIA DA COMPUTAÇÃO (BACHARELADO)/CI - João Pessoa(João Pessoa)", label: "CIÊNCIA DA COMPUTAÇÃO (BACHARELADO)/CI - João Pessoa(João Pessoa)" },
-  { id: "1626865", value: "ENGENHARIA DE COMPUTAÇÃO/CI - João Pessoa(João Pessoa)", label: "ENGENHARIA DE COMPUTAÇÃO/CI - João Pessoa(João Pessoa)" },
-  { id: "1626769", value: "MATEMÁTICA COMPUTACIONAL (BACH)/CI - João Pessoa(João Pessoa)", label: "MATEMÁTICA COMPUTACIONAL (BACH)/CI - João Pessoa(João Pessoa)" }
-]
-
-const periodos = [
-  { id: "2014.1", value: "2014.1", label: "2014.1" },
-  { id: "2014.2", value: "2014.2", label: "2014.2" },
-  { id: "2015.1", value: "2015.1", label: "2015.1" },
-  { id: "2015.2", value: "2015.2", label: "2015.2" },
-  { id: "2016.1", value: "2016.1", label: "2016.1" },
-  { id: "2016.2", value: "2016.2", label: "2016.2" },
-  { id: "2017.1", value: "2017.1", label: "2017.1" },
-]
 
 const classificacoes = [
   { id: "0", value: "0", label: "0+" },
@@ -65,6 +51,66 @@ class SearchForm extends Component {
 
   constructor(props) {
     super(props);
+    this.state = {
+      cursos: [],
+      periodos: []
+    }
+  }
+  getPeriodos() {
+    request
+      .get('http://localhost:8000/periodos/')
+      .query(null)
+      .set('Accept', 'application/json')
+      .end((error, response) => {
+
+        if (error) {
+          return;
+        }
+
+        const results = response.body;
+
+        let periodosModified = results.map((periodo) => {
+          return {
+            id: periodo.id,
+            value: periodo.semestre,
+            label: periodo.semestre
+          }
+        });
+
+        this.setState({ periodos: periodosModified })
+      })
+
+  }
+
+  getCursos() {
+    request
+      .get('http://localhost:8000/cursos/')
+      .query(null)
+      .set('Accept', 'application/json')
+      .end((error, response) => {
+
+        if (error) {
+          return;
+        }
+
+        const results = response.body;
+
+        let cursosModified = results.map((curso) => {
+          return {
+            id: curso.id,
+            value: curso.nome,
+            label: curso.nome
+          }
+        });
+
+        this.setState({ cursos: cursosModified })
+      })
+
+  }
+
+  componentDidMount() {
+    this.getCursos()
+    this.getPeriodos()
   }
 
   render() {
@@ -93,12 +139,12 @@ class SearchForm extends Component {
         <Grid container alignItems="center" justify="center">
           <Grid item xs={12} sm={4}>
             <Paper square="true">
-              <Selector list={cursos} helperText="Escolha um curso" id="curso" />
+              <Selector list={this.state.cursos} helperText="Escolha um curso" id="curso" />
             </Paper>
           </Grid>
           <Grid item xs={12} sm={2}>
             <Paper square="true">
-              <Selector list={periodos} helperText="Escolha um periodo" id="periodo" />
+              <Selector list={this.state.periodos} helperText="Escolha um periodo" id="periodo" />
             </Paper>
           </Grid>
 

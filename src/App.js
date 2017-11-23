@@ -72,8 +72,10 @@ class App extends Component {
           <Header />
           <Hero />
           <Helper />
+          {/* THIS MUST BE WRAPPED IN AN OUTER COMPONENT */}
           <SearchForm />
           <Results exams={exams}/>
+          {/* ***** */}
           <Footer />
         </div>
       </MuiThemeProvider>
