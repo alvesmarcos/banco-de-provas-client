@@ -23,6 +23,10 @@ const styles = theme => ({
     badge: {
         margin: `0 ${theme.spacing.unit * 2}px`,
     },
+    noStyle: {
+        textDecoration: "none",
+        color: "white"
+    }
 
 });
 
@@ -61,7 +65,7 @@ class ExamCard extends Component {
                             </Badge>
                         </IconButton>
                         <IconButton>
-                            <DownloadIcon />
+                            <a href={this.props.exam.pdflink} download className={this.props.classes.noStyle}><DownloadIcon /> </a>
                         </IconButton>
                     </CardActions>
                 </Card>

@@ -16,7 +16,8 @@ const exams = [
     name: "Banco de Dados II",
     period: "2014.2",
     dateUpload: "05 de Agosto de 2016",
-    rating: "2"
+    rating: "2",
+    pdflink: "http://www.cespe.unb.br/concursos/DPRF_13/arquivos/DPRF13_001_01.pdf"
   },
   {
     name: "Interação Homem-Máquina",
