@@ -7,8 +7,6 @@ import TextField from 'material-ui/TextField';
 import Grid from 'material-ui/Grid'
 import MenuItem from 'material-ui/Menu/MenuItem';
 
-
-
 const styles = theme => ({
   root: theme.mixins.gutters({
     paddingLeft: 10,
@@ -20,21 +18,7 @@ const styles = theme => ({
   
 });
 
-
 class Selector extends Component {
-
-  constructor(props) {
-    super(props);
-  }
-  state = {
-    item: "Curso",
-  };
-
-  handleChange = name => event => {
-    this.setState({
-      [name]: event.target.value,
-    });
-  };
   render() {
     return (
       <div className={this.props.classes.root}>
@@ -42,8 +26,8 @@ class Selector extends Component {
           id={this.props.id}
           select
           className={this.props.classes.textField}
-          value={this.state.item}
-          onChange={this.handleChange('item')}
+          value={this.props.value}
+          onChange={this.props.onChange}
           helperText={this.props.helperText}
           margin="normal"
           fullWidth = "true"

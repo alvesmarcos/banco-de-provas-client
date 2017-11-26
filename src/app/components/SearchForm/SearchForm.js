@@ -1,29 +1,22 @@
-import React, { Component } from "react";
-import Paper from "material-ui/Paper";
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import Paper from 'material-ui/Paper';
 import { withStyles } from 'material-ui/styles';
 import Typography from 'material-ui/Typography';
 import { grey } from 'material-ui/colors';
 import TextField from 'material-ui/TextField';
-import Grid from 'material-ui/Grid'
-import Selector from '../Selector/Selector';
+import Grid from 'material-ui/Grid';
 import Button from 'material-ui/Button';
-import SearchIcon from 'material-ui-icons/Search'
-
-const cursos = [
-  { id: "1626669", value: "CIÊNCIA DA COMPUTAÇÃO (BACHARELADO)/CI - João Pessoa(João Pessoa)", label: "CIÊNCIA DA COMPUTAÇÃO (BACHARELADO)/CI - João Pessoa(João Pessoa)" },
-  { id: "1626865", value: "ENGENHARIA DE COMPUTAÇÃO/CI - João Pessoa(João Pessoa)", label: "ENGENHARIA DE COMPUTAÇÃO/CI - João Pessoa(João Pessoa)" },
-  { id: "1626769", value: "MATEMÁTICA COMPUTACIONAL (BACH)/CI - João Pessoa(João Pessoa)", label: "MATEMÁTICA COMPUTACIONAL (BACH)/CI - João Pessoa(João Pessoa)" }
-]
-
-const periodos = [
-  { id: "2014.1", value: "2014.1", label: "2014.1" },
-  { id: "2014.2", value: "2014.2", label: "2014.2" },
-  { id: "2015.1", value: "2015.1", label: "2015.1" },
-  { id: "2015.2", value: "2015.2", label: "2015.2" },
-  { id: "2016.1", value: "2016.1", label: "2016.1" },
-  { id: "2016.2", value: "2016.2", label: "2016.2" },
-  { id: "2017.1", value: "2017.1", label: "2017.1" },
-]
+import SearchIcon from 'material-ui-icons/Search';
+import request from 'superagent';
+import Selector from '../Selector/Selector';
+import {
+  setCourse,
+  setProgram,
+  setRating,
+  setSemester,
+  searchAndSetExams
+} from '../../../actions/homeAction';
 
 const classificacoes = [
   { id: "0", value: "0", label: "0+" },
@@ -65,6 +58,82 @@ class SearchForm extends Component {
 
   constructor(props) {
     super(props);
+    this.state = {
+      cursos: [],
+      periodos: []
+    }
+  }
+  getPeriodos() {
+    request
+      .get('http://localhost:8000/periodos')
+      .query(null)
+      .set('Accept', 'application/json')
+      .end((error, response) => {
+
+        if (error) {
+          return;
+        }
+
+        const results = response.body;
+
+        let periodosModified = results.map((periodo) => {
+          return {
+            id: periodo.id,
+            value: periodo.semestre,
+            label: periodo.semestre
+          }
+        });
+
+        this.setState({ periodos: periodosModified })
+      })
+
+  }
+
+  getCursos() {
+    request
+      .get('http://localhost:8000/cursos')
+      .query(null)
+      .set('Accept', 'application/json')
+      .end((error, response) => {
+
+        if (error) {
+          return;
+        }
+
+        const results = response.body;
+
+        let cursosModified = results.map((curso) => {
+          return {
+            id: curso.id,
+            value: curso.nome,
+            label: curso.nome
+          }
+        });
+
+        this.setState({ cursos: cursosModified })
+      })
+
+  }
+
+  componentDidMount() {
+    this.getCursos()
+    this.getPeriodos()
+  }
+
+  handleChangeCourse(event) {
+    this.props.setCourse(event.target.value);
+  }
+
+  handleChangeProgram(event) {
+    this.props.setProgram(event.target.value);
+  }
+
+  handleChangeRating(event) {
+    this.props.setRating(event.target.value);
+  }
+
+  handleChangeSemester(event) {
+    this.props.setSemester(event.target.value);
   }
 
   render() {
@@ -76,6 +145,8 @@ class SearchForm extends Component {
             <Paper square="true" className={this.props.classes.searchBar}>
               <TextField
                 id="search-bar"
+                value={this.props.course}
+                onChange={this.handleChangeCourse.bind(this)}
                 InputLabelProps={{
                   shrink: true,
                 }}
@@ -93,18 +164,36 @@ class SearchForm extends Component {
         <Grid container alignItems="center" justify="center">
           <Grid item xs={12} sm={4}>
             <Paper square="true">
-              <Selector list={cursos} helperText="Escolha um curso" id="curso" />
+              <Selector 
+                id="curso" 
+                value={this.props.program}
+                onChange={this.handleChangeProgram.bind(this)}
+                list={this.state.cursos}
+                helperText="Escolha um curso"
+              />
             </Paper>
           </Grid>
           <Grid item xs={12} sm={2}>
             <Paper square="true">
-              <Selector list={periodos} helperText="Escolha um periodo" id="periodo" />
+              <Selector
+                id="periodo" 
+                value={this.props.semester}
+                onChange={this.handleChangeSemester.bind(this)}
+                list={this.state.periodos}
+                helperText="Escolha um periodo"
+              />
             </Paper>
           </Grid>
 
           <Grid item xs={12} sm={2}>
             <Paper square="true">
-              <Selector list={classificacoes} helperText="Escolha uma classificacao" id="classificacao" />
+              <Selector
+                id="classificacao" 
+                value={this.props.rating}
+                onChange={this.handleChangeRating.bind(this)}
+                list={classificacoes}
+                helperText="Escolha uma classificacao"
+              />
             </Paper>
           </Grid>
 
@@ -128,5 +217,15 @@ class SearchForm extends Component {
     );
   }
 }
+
+const mapStateToProps = (state) => ({
+  course: state.homeReducer.course,
+  program: state.homeReducer.program,
+  rating: state.homeReducer.rating,
+  semester: state.homeReducer.semester
+});
+
+SearchForm = connect(mapStateToProps, 
+  {setCourse, setProgram, setRating, setSemester, searchAndSetExams})(SearchForm);
 
 export default withStyles(styles)(SearchForm);
