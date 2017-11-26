@@ -1,4 +1,5 @@
-import React, { Component } from "react";
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import { withStyles } from 'material-ui/styles';
 import Typography from 'material-ui/Typography';
 import { grey } from 'material-ui/colors';
@@ -28,20 +29,13 @@ const styles = theme => ({
 
 class Results extends Component {
 
-  exams = this.props.exams;
-
-  listExams = this.exams.map((exam) => {
+  listExams = this.props.exams.map((exam) => {
     return (
       <Grid item m={3}>
         <ExamCard exam={exam} />
       </Grid>
     )
   });
-
-
-  constructor(props) {
-    super(props);
-  }
 
   render() {
     return (
@@ -56,5 +50,11 @@ class Results extends Component {
     );
   }
 }
+
+const mapStateToProps = (state) => ({
+  exams: state.homeReducer.exams
+});
+
+Results = connect(mapStateToProps, {})(Results);
 
 export default withStyles(styles)(Results);
