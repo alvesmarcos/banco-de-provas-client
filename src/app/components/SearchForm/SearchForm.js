@@ -142,19 +142,15 @@ class SearchForm extends Component {
 
         <Grid container alignItems="center" justify="center">
           <Grid item xs={12} sm={9}>
-            <Paper square="true" className={this.props.classes.searchBar}>
-              <TextField
+            <Paper square="true">
+              <Selector
                 id="search-bar"
                 value={this.props.course}
                 onChange={this.handleChangeCourse.bind(this)}
-                InputLabelProps={{
-                  shrink: true,
-                }}
-                helperText="Digite a disciplina"
+                list={this.state.cursos}
+                helperText="Escolha uma disciplina"
                 fullWidth
-                margin="normal"
               />
-
             </Paper>
           </Grid>
 
