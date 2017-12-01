@@ -4,11 +4,9 @@ import Paper from 'material-ui/Paper';
 import { withStyles } from 'material-ui/styles';
 import Typography from 'material-ui/Typography';
 import { grey } from 'material-ui/colors';
-import TextField from 'material-ui/TextField';
 import Grid from 'material-ui/Grid';
 import Button from 'material-ui/Button';
 import SearchIcon from 'material-ui-icons/Search';
-import request from 'superagent';
 import Selector from '../Selector/Selector';
 import {
   setCourse,
@@ -17,6 +15,11 @@ import {
   setSemester,
   searchAndSetExams
 } from '../../../actions/homeAction';
+import {
+  syncDownloadCursos,
+  syncDownloadPeriodos,
+  syncDownloadDisciplinas
+} from '../../../sync/sync-download';
 
 const classificacoes = [
   { id: "0", value: "0", label: "0+" },
@@ -60,64 +63,48 @@ class SearchForm extends Component {
     super(props);
     this.state = {
       cursos: [],
-      periodos: []
+      periodos: [],
+      disciplinas: []
     }
   }
+  
+  getDisciplinas() {
+    syncDownloadDisciplinas().then(res => {
+      try {
+        const disciplinas = res.map((disciplina) => ({ id: disciplina.id, value: disciplina.nome, label: disciplina.nome }));
+        this.setState({ disciplinas });
+      } catch(e) {
+        console.log(e);
+      }
+    }); 
+  }
+  
   getPeriodos() {
-    request
-      .get('http://localhost:8000/periodos')
-      .query(null)
-      .set('Accept', 'application/json')
-      .end((error, response) => {
-
-        if (error) {
-          return;
-        }
-
-        const results = response.body;
-
-        let periodosModified = results.map((periodo) => {
-          return {
-            id: periodo.id,
-            value: periodo.semestre,
-            label: periodo.semestre
-          }
-        });
-
-        this.setState({ periodos: periodosModified })
-      })
-
+    syncDownloadPeriodos().then(res => {
+      try {
+        const periodos = res.map((periodo) => ({ id: periodo.id, value: periodo.semestre, label: periodo.semestre }));
+        this.setState({ periodos });
+      } catch(e) {
+        console.log(e);
+      }
+    }); 
   }
 
   getCursos() {
-    request
-      .get('http://localhost:8000/cursos')
-      .query(null)
-      .set('Accept', 'application/json')
-      .end((error, response) => {
-
-        if (error) {
-          return;
-        }
-
-        const results = response.body;
-
-        let cursosModified = results.map((curso) => {
-          return {
-            id: curso.id,
-            value: curso.nome,
-            label: curso.nome
-          }
-        });
-
-        this.setState({ cursos: cursosModified })
-      })
-
+    syncDownloadCursos().then(res => {
+      try {
+        const cursos = res.map((curso) => ({ id: curso.id, value: curso.nome, label: curso.nome }));
+        this.setState({ cursos });
+      } catch(e) {
+        console.log(e);
+      }
+    });
   }
 
   componentDidMount() {
     this.getCursos()
     this.getPeriodos()
+    this.getDisciplinas();
   }
 
   handleChangeCourse(event) {
@@ -147,10 +134,11 @@ class SearchForm extends Component {
                 id="search-bar"
                 value={this.props.course}
                 onChange={this.handleChangeCourse.bind(this)}
-                list={this.state.cursos}
                 helperText="Escolha uma disciplina"
+                list={this.state.cursos}
                 fullWidth
               />
+
             </Paper>
           </Grid>
 
