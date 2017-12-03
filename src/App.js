@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Provider } from 'react-redux';
-import { createStore } from 'redux';
+import { createStore, applyMiddleware } from 'redux';
+import ReduxThunk from 'redux-thunk';
 import { MuiThemeProvider, createMuiTheme } from 'material-ui/styles';
 import { Header, Results, Footer, Hero, SearchForm,Helper } from './app/components';
 import reducers from './reducers';
@@ -11,12 +12,10 @@ const theme = createMuiTheme({
   },
 });
 
-let store = createStore(reducers);
-
 class App extends Component {
   render() {
     return (
-      <Provider store={store}>
+      <Provider store={ createStore(reducers, applyMiddleware(ReduxThunk)) }>
         <MuiThemeProvider theme={theme}>
           <div>
             <Header />
