@@ -3,22 +3,35 @@
  */
 import ClientApi from './client-api';
 
-const bancoApi = { url: 'http://dadossigaaufpb.herokuapp.com/api/v1', contentType: 'application/json' };
+const bancoApi = { url: 'http://localhost:8000/api/v1', contentType: 'application/json' };
 
-export const syncDownloadCursos = async() => {
+export const syncCursos = async() => {
   const clientApi = new ClientApi(bancoApi.url, bancoApi.contentType);
 
-  return await clientApi.get('/cursos');
+  return await clientApi.get('/cursos/');
 };
 
-export const syncDownloadDisciplinas = async() => {
+export const syncDisciplinas = async() => {
   const clientApi = new ClientApi(bancoApi.url, bancoApi.contentType);
 
-  return await clientApi.get('/disciplinas');
+  return await clientApi.get('/disciplinas/');
 };
 
-export const syncDownloadPeriodos = async() => {
+export const syncPeriodos = async() => {
   const clientApi = new ClientApi(bancoApi.url, bancoApi.contentType);
 
-  return await clientApi.get('/periodos');
+  return await clientApi.get('/periodos/');
 };
+
+export const syncProvas = async() => {
+  const clientApi = new ClientApi(bancoApi.url, bancoApi.contentType);
+  
+  return await clientApi.get(`/provas/`);
+};
+
+export const getProvasWithQuery = async(query) => {
+  const clientApi = new ClientApi(bancoApi.url, bancoApi.contentType);
+
+  return await clientApi.get(`/provas/${query}`);
+};
+

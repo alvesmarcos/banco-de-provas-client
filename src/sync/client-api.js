@@ -13,7 +13,7 @@ class ClientApi {
       .then(res => {
         return res.body;
       }, err => {
-        console.log(err);
+        throw err;
       });
   }
 
