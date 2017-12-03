@@ -28,14 +28,16 @@ const styles = theme => ({
 });
 
 class Results extends Component {
-
-  listExams = this.props.exams.map((exam) => {
-    return (
-      <Grid item m={3}>
-        <ExamCard exam={exam} />
-      </Grid>
-    )
-  });
+  
+  renderListExams() {
+    return this.props.provas.map((prova) => {
+      return (
+        <Grid item m={3}>
+          <ExamCard exam={prova} />
+        </Grid>
+      )}
+    );
+  }
 
   render() {
     return (
@@ -44,7 +46,7 @@ class Results extends Component {
           Resultados
         </Typography>
         <Grid container justify="center" alignItems="left">
-          {this.listExams}
+          {this.renderListExams()}
         </Grid>
       </div>
     );
@@ -52,7 +54,7 @@ class Results extends Component {
 }
 
 const mapStateToProps = (state) => ({
-  exams: state.homeReducer.exams
+  provas: state.homeReducer.provas
 });
 
 Results = connect(mapStateToProps, {})(Results);

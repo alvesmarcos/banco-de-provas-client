@@ -31,9 +31,6 @@ const styles = theme => ({
 });
 
 class ExamCard extends Component {
-    constructor(props) {
-        super(props);
-    }
 
     defaultThumb = "https://www.comic.org.uk/theme/comic/images/pdf-document.png"
 
@@ -43,29 +40,29 @@ class ExamCard extends Component {
                 <Card className={this.props.classes.card}>
                     <CardMedia
                         className={this.props.classes.media}
-                        image={this.props.exam.thumbnail == null ? this.defaultThumb : this.props.exam.thumbnail}
+                        image={this.props.exam.miniatura === null ? this.defaultThumb : this.props.exam.miniatura}
                         title="Imagem da Prova"
                     />
                     <CardContent>
                         <Typography type="headline" component="h2">
-                            {this.props.exam.name}
+                            {this.props.exam.disciplina}
                         </Typography>
                         <Typography component="p">
-                            {this.props.exam.period}
+                            {this.props.exam.periodo}
                         </Typography>
                         <Typography type="caption" component="p">
-                            Upload em {this.props.exam.dateUpload}
+                            Upload em {this.props.exam.data_upload}
                         </Typography>
                     </CardContent>
                     <CardActions>
 
                         <IconButton>
-                            <Badge className={this.props.classes.badge} badgeContent={this.props.exam.rating} color="accent">
+                            <Badge className={this.props.classes.badge} badgeContent={this.props.exam.classificacao} color="accent">
                                 <FavoriteIcon />
                             </Badge>
                         </IconButton>
                         <IconButton>
-                            <a href={this.props.exam.pdflink} download className={this.props.classes.noStyle}><DownloadIcon /> </a>
+                            <a href={this.props.exam.pdf} download className={this.props.classes.noStyle}><DownloadIcon /> </a>
                         </IconButton>
                     </CardActions>
                 </Card>

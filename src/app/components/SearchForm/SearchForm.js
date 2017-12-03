@@ -9,17 +9,19 @@ import Button from 'material-ui/Button';
 import SearchIcon from 'material-ui-icons/Search';
 import Selector from '../Selector/Selector';
 import {
-  setCourse,
-  setProgram,
-  setRating,
-  setSemester,
-  searchAndSetExams
+  setDisciplina,
+  setCurso,
+  setClassificacao,
+  setPeriodo,
+  searchAndSetProvas
 } from '../../../actions/homeAction';
 import {
-  syncDownloadCursos,
-  syncDownloadPeriodos,
-  syncDownloadDisciplinas
+  syncCursos,
+  syncPeriodos,
+  syncDisciplinas
 } from '../../../sync/sync-download';
+
+let filters = '';
 
 const classificacoes = [
   { id: "0", value: "0", label: "0+" },
@@ -69,35 +71,32 @@ class SearchForm extends Component {
   }
   
   getDisciplinas() {
-    syncDownloadDisciplinas().then(res => {
-      try {
-        const disciplinas = res.map((disciplina) => ({ id: disciplina.id, value: disciplina.nome, label: disciplina.nome }));
+    syncDisciplinas()
+      .then(res => {
+        const disciplinas = res.map((disciplina) => ({ id: disciplina.id, value: disciplina.id, label: disciplina.nome }));
         this.setState({ disciplinas });
-      } catch(e) {
-        console.log(e);
-      }
-    }); 
+      }).catch(err => {
+        console.log(err);
+      }); 
   }
   
   getPeriodos() {
-    syncDownloadPeriodos().then(res => {
-      try {
-        const periodos = res.map((periodo) => ({ id: periodo.id, value: periodo.semestre, label: periodo.semestre }));
+    syncPeriodos()
+      .then(res => {
+        const periodos = res.map((periodo) => ({ id: periodo.id, value: periodo.id, label: periodo.semestre }));
         this.setState({ periodos });
-      } catch(e) {
-        console.log(e);
-      }
-    }); 
+      }).catch(err => {
+        console.log(err);
+      }); 
   }
 
   getCursos() {
-    syncDownloadCursos().then(res => {
-      try {
-        const cursos = res.map((curso) => ({ id: curso.id, value: curso.nome, label: curso.nome }));
+    syncCursos()
+      .then(res => {
+        const cursos = res.map((curso) => ({ id: curso.id, value: curso.id, label: curso.nome }));
         this.setState({ cursos });
-      } catch(e) {
-        console.log(e);
-      }
+      }).catch(err => {
+      console.log(err);
     });
   }
 
@@ -107,20 +106,40 @@ class SearchForm extends Component {
     this.getDisciplinas();
   }
 
-  handleChangeCourse(event) {
-    this.props.setCourse(event.target.value);
+  handleChangeDisciplina(event) {
+    this.props.setDisciplina(event.target.value);
   }
 
-  handleChangeProgram(event) {
-    this.props.setProgram(event.target.value);
+  handleChangeCurso(event) {
+    this.props.setCurso(event.target.value);
   }
 
-  handleChangeRating(event) {
-    this.props.setRating(event.target.value);
+  handleChangeClassificacao(event) {
+    this.props.setClassificacao(event.target.value);
   }
 
-  handleChangeSemester(event) {
-    this.props.setSemester(event.target.value);
+  handleChangePeriodo(event) {
+    this.props.setPeriodo(event.target.value);
+  }
+
+  buildFilter(attr, searchBy) {
+    if(attr) {
+      let concatenationOrFirst = '?';
+      if (filters) {
+        concatenationOrFirst = '&';
+      }
+      filters += `${concatenationOrFirst}${searchBy}=${attr}`;
+    }
+  }
+
+  onClickSearch() {
+    filters = '';
+    this.buildFilter(this.props.disciplina, 'disciplina');
+    this.buildFilter(this.props.curso, 'curso');
+    this.buildFilter(this.props.periodo, 'periodo');
+    this.buildFilter(this.props.classificacao, 'classificacao');
+
+    this.props.searchAndSetProvas(filters);
   }
 
   render() {
@@ -132,10 +151,10 @@ class SearchForm extends Component {
             <Paper square="true">
               <Selector
                 id="search-bar"
-                value={this.props.course}
-                onChange={this.handleChangeCourse.bind(this)}
+                value={this.props.disciplina}
+                onChange={this.handleChangeDisciplina.bind(this)}
                 helperText="Escolha uma disciplina"
-                list={this.state.cursos}
+                list={this.state.disciplinas}
                 fullWidth
               />
 
@@ -150,8 +169,8 @@ class SearchForm extends Component {
             <Paper square="true">
               <Selector 
                 id="curso" 
-                value={this.props.program}
-                onChange={this.handleChangeProgram.bind(this)}
+                value={this.props.curso}
+                onChange={this.handleChangeCurso.bind(this)}
                 list={this.state.cursos}
                 helperText="Escolha um curso"
               />
@@ -161,8 +180,8 @@ class SearchForm extends Component {
             <Paper square="true">
               <Selector
                 id="periodo" 
-                value={this.props.semester}
-                onChange={this.handleChangeSemester.bind(this)}
+                value={this.props.periodo}
+                onChange={this.handleChangePeriodo.bind(this)}
                 list={this.state.periodos}
                 helperText="Escolha um periodo"
               />
@@ -173,8 +192,8 @@ class SearchForm extends Component {
             <Paper square="true">
               <Selector
                 id="classificacao" 
-                value={this.props.rating}
-                onChange={this.handleChangeRating.bind(this)}
+                value={this.props.classificacao}
+                onChange={this.handleChangeClassificacao.bind(this)}
                 list={classificacoes}
                 helperText="Escolha uma classificacao"
               />
@@ -183,7 +202,9 @@ class SearchForm extends Component {
 
           <Grid item xs={12} sm={1}>
             <Typography align="center">
-              <Button className={this.props.classes.button}>
+              <Button
+                onClick={this.onClickSearch.bind(this)}
+                className={this.props.classes.button}>
                 <SearchIcon />
               </Button>
             </Typography>
@@ -203,13 +224,13 @@ class SearchForm extends Component {
 }
 
 const mapStateToProps = (state) => ({
-  course: state.homeReducer.course,
-  program: state.homeReducer.program,
-  rating: state.homeReducer.rating,
-  semester: state.homeReducer.semester
+  disciplina: state.homeReducer.disciplina,
+  curso: state.homeReducer.curso,
+  classificacao: state.homeReducer.classificacao,
+  periodo: state.homeReducer.periodo
 });
 
 SearchForm = connect(mapStateToProps, 
-  {setCourse, setProgram, setRating, setSemester, searchAndSetExams})(SearchForm);
+  {setDisciplina, setCurso, setClassificacao, setPeriodo, searchAndSetProvas})(SearchForm);
 
 export default withStyles(styles)(SearchForm);
